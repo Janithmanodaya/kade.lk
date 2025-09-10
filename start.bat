@@ -30,7 +30,7 @@ IF EXIST "python" (
             )
         ) ELSE (
             echo curl not found, using powershell...
-            powershell -Command "try { Invoke-WebRequest -Uri 'https://github.com/europeanplaice/distribute-embeddable-python/releases/download/v3.11.0/python-3.11.0-embed-amd64.zip' -OutFile 'python_installer.zip' -UseBasicParsing } catch { Write-Error $_; exit 1 }"
+            powershell -Command "Invoke-WebRequest -Uri 'https://github.com/europeanplaice/distribute-embeddable-python/releases/download/v3.11.0/python-3.11.0-embed-amd64.zip' -OutFile 'python_installer.zip' -UseBasicParsing; if (-not $?) { Write-Host 'PowerShell download failed.'; exit 1 }"
             IF %ERRORLEVEL% NEQ 0 (
                 echo powershell download failed. Please check your internet connection and try again.
                 pause
