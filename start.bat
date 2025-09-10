@@ -1,5 +1,13 @@
 @echo off
 
+echo %~dp0 | find /I "Temp" > nul
+if %errorlevel% equ 0 (
+    echo ERROR: This script should not be run from a temporary folder.
+    echo Please extract all files from the zip archive to a new folder on your desktop or in your documents, and then run start.bat from there.
+    pause
+    exit /b 1
+)
+
 REM This script uses a self-contained Python environment and a virtual environment.
 REM This is a best practice for distributable applications as it avoids modifying the user's system-wide Python installation.
 
