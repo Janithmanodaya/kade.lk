@@ -1,5 +1,8 @@
 @echo off
 
+REM This script uses a self-contained Python environment and a virtual environment.
+REM This is a best practice for distributable applications as it avoids modifying the user's system-wide Python installation.
+
 REM Step 1: Environment Check
 IF EXIST "python" (
     echo Python is already installed.
@@ -8,7 +11,21 @@ IF EXIST "python" (
     REM Download python installer if it does not exist
     IF NOT EXIST "python_installer.zip" (
         echo Downloading Python installer...
-        curl -L https://github.com/europeanplaice/distribute-embeddable-python/releases/download/v3.11.0/python-3.11.0-embed-amd64.zip -o python_installer.zip
+        where curl >nul 2>nul
+        IF %ERRORLEVEL% EQU 0 (
+            echo Using curl to download...
+            curl -L https://github.com/europeanplaice/distribute-embeddable-python/releases/download/v3.11.0/python-3.11.0-embed-amd64.zip -o python_installer.zip
+        ) ELSE (
+            echo curl not found, using powershell...
+            powershell -Command "try { Invoke-WebRequest -Uri 'https://github.com/europeanplaice/distribute-embeddable-python/releases/download/v3.11.0/python-3.11.0-embed-amd64.zip' -OutFile 'python_installer.zip' -UseBasicParsing } catch { Write-Error $_; exit 1 }"
+        )
+    )
+
+    REM Check if download was successful
+    IF NOT EXIST "python_installer.zip" (
+        echo Failed to download Python installer. Please check your internet connection and try again.
+        pause
+        exit /b 1
     )
 
     REM Step 2: Silent Installation (Unzipping)
