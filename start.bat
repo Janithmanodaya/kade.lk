@@ -15,15 +15,25 @@ IF EXIST "python" (
         IF %ERRORLEVEL% EQU 0 (
             echo Using curl to download...
             curl -L https://github.com/europeanplaice/distribute-embeddable-python/releases/download/v3.11.0/python-3.11.0-embed-amd64.zip -o python_installer.zip
+            IF %ERRORLEVEL% NEQ 0 (
+                echo curl download failed. Please check your internet connection and try again.
+                pause
+                exit /b 1
+            )
         ) ELSE (
             echo curl not found, using powershell...
             powershell -Command "try { Invoke-WebRequest -Uri 'https://github.com/europeanplaice/distribute-embeddable-python/releases/download/v3.11.0/python-3.11.0-embed-amd64.zip' -OutFile 'python_installer.zip' -UseBasicParsing } catch { Write-Error $_; exit 1 }"
+            IF %ERRORLEVEL% NEQ 0 (
+                echo powershell download failed. Please check your internet connection and try again.
+                pause
+                exit /b 1
+            )
         )
     )
 
     REM Check if download was successful
     IF NOT EXIST "python_installer.zip" (
-        echo Failed to download Python installer. Please check your internet connection and try again.
+        echo Failed to download Python installer. An unknown error occurred.
         pause
         exit /b 1
     )
