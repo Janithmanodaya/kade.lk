@@ -38,8 +38,9 @@ IF EXIST "python" (
         exit /b 1
     )
 
-    REM Step 2: Silent Installation (Unzipping)
-    cscript //nologo setup.vbs "powershell -ExecutionPolicy Bypass -Command \"Expand-Archive -Path 'python_installer.zip' -DestinationPath '.' -Force\""
+    REM Step 2: Installation (Unzipping)
+    echo Unzipping Python installer...
+    powershell -ExecutionPolicy Bypass -Command "try { Expand-Archive -Path 'python_installer.zip' -DestinationPath '.' -Force } catch { Write-Host 'Error: Failed to unzip installer.'; Write-Error $_; exit 1 }"
     IF %ERRORLEVEL% NEQ 0 (
         echo Failed to unzip the Python installer. The file might be corrupt.
         echo Please delete python_installer.zip and try again.
