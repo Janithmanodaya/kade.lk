@@ -8,7 +8,7 @@ IF EXIST "python" (
     REM Download python installer if it does not exist
     IF NOT EXIST "python_installer.zip" (
         echo Downloading Python installer...
-        powershell -Command "Invoke-WebRequest -Uri 'https://github.com/europeanplaice/distribute-embeddable-python/releases/download/v3.11.0/python-3.11.0-embed-amd64.zip' -OutFile 'python_installer.zip'"
+        curl -L https://github.com/europeanplaice/distribute-embeddable-python/releases/download/v3.11.0/python-3.11.0-embed-amd64.zip -o python_installer.zip
     )
 
     REM Step 2: Silent Installation (Unzipping)

@@ -95,7 +95,7 @@ class RepoProcessor:
 
         self.log(f"Running {file_to_run}...\n")
         try:
-            if sys..platform == "win32":
+            if sys.platform == "win32":
                 python_executable = os.path.join(os.getcwd(), "venv", "Scripts", "python.exe")
             else:
                 python_executable = os.path.join(os.getcwd(), "venv", "bin", "python")
