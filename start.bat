@@ -30,9 +30,20 @@ IF EXIST "python" (
             )
         ) ELSE (
             echo curl not found, using powershell...
-            powershell -Command "Invoke-WebRequest -Uri 'https://github.com/europeanplaice/distribute-embeddable-python/releases/download/v3.11.0/python-3.11.0-embed-amd64.zip' -OutFile 'python_installer.zip' -UseBasicParsing; if (-not $?) { Write-Host 'PowerShell download failed.'; exit 1 }"
-            IF %ERRORLEVEL% NEQ 0 (
-                echo powershell download failed. Please check your internet connection and try again.
+            set STATUS_FILE=download_status.txt
+            if exist %STATUS_FILE% del %STATUS_FILE%
+            powershell -Command "try { Invoke-WebRequest -Uri 'https://github.com/europeanplaice/distribute-embeddable-python/releases/download/v3.11.0/python-3.11.0-embed-amd64.zip' -OutFile 'python_installer.zip' -UseBasicParsing; 'SUCCESS' | Out-File -FilePath %STATUS_FILE% -Encoding ascii } catch { $_.Exception.Message | Out-File -FilePath %STATUS_FILE% -Encoding ascii }"
+
+            set /p STATUS=<"%STATUS_FILE%"
+            if exist %STATUS_FILE% del %STATUS_FILE%
+
+            IF /I "%STATUS%" NEQ "SUCCESS" (
+                echo.
+                echo ##################################################
+                echo # PowerShell download failed. Error message:
+                echo ##################################################
+                echo %STATUS%
+                echo.
                 pause
                 exit /b 1
             )
@@ -47,7 +58,6 @@ IF EXIST "python" (
     )
 
     REM Step 2: Installation (Unzipping)
-    echo Unzipping Python installer...
     powershell -ExecutionPolicy Bypass -Command "try { Expand-Archive -Path 'python_installer.zip' -DestinationPath '.' -Force } catch { Write-Host 'Error: Failed to unzip installer.'; Write-Error $_; exit 1 }"
     IF %ERRORLEVEL% NEQ 0 (
         echo Failed to unzip the Python installer. The file might be corrupt.
